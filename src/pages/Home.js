@@ -36,15 +36,15 @@ const Home = () => {
     {
       icon: <DirectionsCarIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
       title: 'Professional Transport',
-      description: 'Specialized car carriers with experienced drivers and proper equipment.'
+      description: 'Experienced drivers and specialized car carriers for safe transportation.'
     }
   ];
 
   return (
     <Box>
       {/* Hero Section */}
-      <Box
-        sx={{
+      <Box 
+        sx={{ 
           background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
           color: 'white',
           py: 8,
@@ -53,31 +53,34 @@ const Home = () => {
       >
         <Container maxWidth="md">
           <Typography variant="h2" component="h1" gutterBottom>
-            Car Transport Made Simple
+            CarBhejo
           </Typography>
-          <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 4 }}>
-            Transport your car anywhere in India with our reliable, insured, and professional service
+          <Typography variant="h5" component="h2" gutterBottom>
+            Professional Car Transport Service Across India
           </Typography>
-          <Button
-            variant="contained"
+          <Typography variant="body1" sx={{ mb: 4, opacity: 0.9 }}>
+            Safe, reliable, and insured car transportation from door to door
+          </Typography>
+          <Button 
+            variant="contained" 
             size="large"
             onClick={() => navigate('/booking')}
-            sx={{
-              backgroundColor: 'white',
+            sx={{ 
+              backgroundColor: 'white', 
               color: 'primary.main',
               '&:hover': {
                 backgroundColor: 'grey.100'
               }
             }}
           >
-            Book Your Car Transport
+            Book Your Transport Now
           </Button>
         </Container>
       </Box>
 
       {/* Features Section */}
       <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Typography variant="h3" component="h2" textAlign="center" gutterBottom>
+        <Typography variant="h3" component="h2" align="center" gutterBottom>
           Why Choose CarBhejo?
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>
@@ -102,20 +105,28 @@ const Home = () => {
       </Container>
 
       {/* CTA Section */}
-      <Box sx={{ backgroundColor: 'grey.100', py: 6 }}>
+      <Box sx={{ backgroundColor: 'grey.50', py: 8 }}>
         <Container maxWidth="md" sx={{ textAlign: 'center' }}>
           <Typography variant="h4" component="h2" gutterBottom>
             Ready to Transport Your Car?
           </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
-            Get instant quotes and book your car transport in minutes
+          <Typography variant="body1" sx={{ mb: 4 }}>
+            Get instant quotes and book your car transport service in minutes
           </Typography>
-          <Button
-            variant="contained"
+          <Button 
+            variant="contained" 
             size="large"
             onClick={() => navigate('/booking')}
+            sx={{ mr: 2 }}
           >
-            Get Started Now
+            Book Transport
+          </Button>
+          <Button 
+            variant="outlined" 
+            size="large"
+            onClick={() => navigate('/tracking')}
+          >
+            Track Order
           </Button>
         </Container>
       </Box>

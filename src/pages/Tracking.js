@@ -31,9 +31,9 @@ const Tracking = () => {
       time: '10:00 AM'
     },
     delivery: {
-      address: '456 Park Avenue, Delhi, Delhi - 110001',
-      estimatedDate: '2024-01-18',
-      estimatedTime: '2:00 PM'
+      address: '456 Central Avenue, Delhi, Delhi - 110001',
+      date: '2024-01-18',
+      time: '2:00 PM'
     },
     vehicle: {
       make: 'Maruti',
@@ -41,59 +41,52 @@ const Tracking = () => {
       year: '2020',
       registration: 'MH12AB1234'
     },
-    currentLocation: 'Agra, Uttar Pradesh',
     driver: {
       name: 'Rajesh Kumar',
       phone: '+91 98765 43210',
-      vehicleNumber: 'UP80AB1234'
+      vehicle: 'Car Carrier - MH01CD5678'
     },
     timeline: [
       {
         step: 'Booking Confirmed',
         date: '2024-01-14',
         time: '3:30 PM',
-        completed: true,
-        description: 'Your booking has been confirmed and assigned to a driver'
+        completed: true
       },
       {
         step: 'Driver Assigned',
         date: '2024-01-15',
         time: '8:00 AM',
-        completed: true,
-        description: 'Driver Rajesh Kumar has been assigned to your transport'
+        completed: true
       },
       {
         step: 'Pickup Completed',
         date: '2024-01-15',
-        time: '10:30 AM',
-        completed: true,
-        description: 'Vehicle has been picked up from the pickup location'
+        time: '10:00 AM',
+        completed: true
       },
       {
         step: 'In Transit',
         date: '2024-01-16',
-        time: '2:00 PM',
-        completed: true,
-        description: 'Vehicle is currently in transit to delivery location'
+        time: '9:00 AM',
+        completed: true
       },
       {
         step: 'Out for Delivery',
         date: '2024-01-18',
-        time: '10:00 AM',
-        completed: false,
-        description: 'Vehicle will be delivered to the specified address'
+        time: '12:00 PM',
+        completed: false
       },
       {
         step: 'Delivered',
         date: '2024-01-18',
         time: '2:00 PM',
-        completed: false,
-        description: 'Vehicle has been successfully delivered'
+        completed: false
       }
     ]
   };
 
-  const handleTrack = () => {
+  const handleSearch = () => {
     if (!trackingNumber.trim()) {
       alert('Please enter a tracking number');
       return;
@@ -102,7 +95,12 @@ const Tracking = () => {
     setLoading(true);
     // Simulate API call
     setTimeout(() => {
-      setTrackingData(mockTrackingData);
+      if (trackingNumber === 'CB123456789') {
+        setTrackingData(mockTrackingData);
+      } else {
+        setTrackingData(null);
+        alert('Tracking number not found. Please try with: CB123456789');
+      }
       setLoading(false);
     }, 1000);
   };
@@ -111,10 +109,10 @@ const Tracking = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        Track Your Car Transport
+      <Typography variant="h4" gutterBottom align="center">
+        Track Your Order
       </Typography>
-
+      
       {/* Search Section */}
       <Paper sx={{ p: 3, mb: 4 }}>
         <Typography variant="h6" gutterBottom>
@@ -127,93 +125,84 @@ const Tracking = () => {
             value={trackingNumber}
             onChange={(e) => setTrackingNumber(e.target.value)}
             placeholder="e.g., CB123456789"
-            variant="outlined"
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
           <Button
             variant="contained"
-            onClick={handleTrack}
+            onClick={handleSearch}
             disabled={loading}
-            startIcon={<SearchIcon />}
-            sx={{ minWidth: 120 }}
+            startIcon={loading ? <SearchIcon /> : <SearchIcon />}
           >
-            {loading ? 'Tracking...' : 'Track'}
+            {loading ? 'Searching...' : 'Track'}
           </Button>
         </Box>
+        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+          Try with tracking number: <strong>CB123456789</strong>
+        </Typography>
       </Paper>
 
       {/* Tracking Results */}
       {trackingData && (
         <Box>
-          {/* Status Overview */}
-          <Card sx={{ mb: 3 }}>
+          {/* Order Summary */}
+          <Card sx={{ mb: 4 }}>
             <CardContent>
-              <Grid container spacing={3} alignItems="center">
+              <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                   <Typography variant="h6" gutterBottom>
-                    Tracking Number: {trackingData.trackingNumber}
+                    Order Details
                   </Typography>
-                  <Chip 
-                    label={trackingData.status} 
-                    color="primary" 
-                    variant="outlined"
-                    sx={{ mb: 2 }}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    Current Location: {trackingData.currentLocation}
+                  <Typography variant="body2">
+                    <strong>Tracking Number:</strong> {trackingData.trackingNumber}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Status:</strong> 
+                    <Chip 
+                      label={trackingData.status} 
+                      color="primary" 
+                      size="small" 
+                      sx={{ ml: 1 }}
+                    />
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Vehicle:</strong> {trackingData.vehicle.year} {trackingData.vehicle.make} {trackingData.vehicle.model}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Registration:</strong> {trackingData.vehicle.registration}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Vehicle Details
+                  <Typography variant="h6" gutterBottom>
+                    Driver Information
                   </Typography>
                   <Typography variant="body2">
-                    {trackingData.vehicle.year} {trackingData.vehicle.make} {trackingData.vehicle.model}
+                    <strong>Name:</strong> {trackingData.driver.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Registration: {trackingData.vehicle.registration}
+                  <Typography variant="body2">
+                    <strong>Phone:</strong> {trackingData.driver.phone}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Vehicle:</strong> {trackingData.driver.vehicle}
                   </Typography>
                 </Grid>
               </Grid>
             </CardContent>
           </Card>
 
-          {/* Driver Information */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Driver Information
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <Typography variant="subtitle2">Driver Name</Typography>
-                  <Typography variant="body2">{trackingData.driver.name}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Typography variant="subtitle2">Contact Number</Typography>
-                  <Typography variant="body2">{trackingData.driver.phone}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Typography variant="subtitle2">Vehicle Number</Typography>
-                  <Typography variant="body2">{trackingData.driver.vehicleNumber}</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-
-          {/* Pickup and Delivery Details */}
-          <Grid container spacing={3} sx={{ mb: 3 }}>
+          {/* Pickup and Delivery */}
+          <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} md={6}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
                     <LocationOn sx={{ mr: 1, verticalAlign: 'middle' }} />
-                    Pickup Details
+                    Pickup Location
                   </Typography>
-                  <Typography variant="body2" paragraph>
+                  <Typography variant="body2">
                     {trackingData.pickup.address}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Date: {trackingData.pickup.date} at {trackingData.pickup.time}
+                  <Typography variant="body2" color="textSecondary">
+                    {trackingData.pickup.date} at {trackingData.pickup.time}
                   </Typography>
                 </CardContent>
               </Card>
@@ -223,13 +212,13 @@ const Tracking = () => {
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
                     <DirectionsCar sx={{ mr: 1, verticalAlign: 'middle' }} />
-                    Delivery Details
+                    Delivery Location
                   </Typography>
-                  <Typography variant="body2" paragraph>
+                  <Typography variant="body2">
                     {trackingData.delivery.address}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Estimated: {trackingData.delivery.estimatedDate} at {trackingData.delivery.estimatedTime}
+                  <Typography variant="body2" color="textSecondary">
+                    {trackingData.delivery.date} at {trackingData.delivery.time}
                   </Typography>
                 </CardContent>
               </Card>
@@ -240,28 +229,20 @@ const Tracking = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Transport Timeline
+                Order Timeline
               </Typography>
               <Stepper orientation="vertical">
                 {trackingData.timeline.map((item, index) => (
                   <Step key={index} active={item.completed} completed={item.completed}>
                     <StepLabel
-                      StepIconComponent={item.completed ? CheckCircle : undefined}
-                      StepIconProps={{
-                        sx: {
-                          color: item.completed ? 'success.main' : 'grey.400'
-                        }
-                      }}
+                      icon={item.completed ? <CheckCircle color="success" /> : index + 1}
                     >
                       <Box>
-                        <Typography variant="subtitle1">
+                        <Typography variant="body1">
                           {item.step}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="textSecondary">
                           {item.date} at {item.time}
-                        </Typography>
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                          {item.description}
                         </Typography>
                       </Box>
                     </StepLabel>
@@ -271,26 +252,6 @@ const Tracking = () => {
             </CardContent>
           </Card>
         </Box>
-      )}
-
-      {/* Help Section */}
-      {!trackingData && (
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Need Help?
-            </Typography>
-            <Typography variant="body2" paragraph>
-              • Enter your tracking number to check the status of your car transport
-            </Typography>
-            <Typography variant="body2" paragraph>
-              • Tracking numbers are provided in your booking confirmation email
-            </Typography>
-            <Typography variant="body2" paragraph>
-              • For any issues, contact our customer support at support@carbhejo.com
-            </Typography>
-          </CardContent>
-        </Card>
       )}
     </Container>
   );

@@ -8,13 +8,6 @@ main {
   flex: 1;
 }
 
-/* Map container styling */
-.leaflet-container {
-  height: 100%;
-  width: 100%;
-  border-radius: 8px;
-}
-
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -49,26 +42,46 @@ main {
 }
 
 /* Stepper customization */
-.MuiStepLabel-root.Mui-completed .MuiStepLabel-labelContainer .MuiStepLabel-label {
-  color: #2e7d32;
+.MuiStepLabel-root.Mui-completed .MuiStepLabel-label {
+  color: #1976d2 !important;
 }
 
-.MuiStepLabel-root.Mui-active .MuiStepLabel-labelContainer .MuiStepLabel-label {
-  color: #1976d2;
+.MuiStepLabel-root.Mui-active .MuiStepLabel-label {
+  color: #1976d2 !important;
+  font-weight: 600;
+}
+
+/* Hero section gradient animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.hero-gradient {
+  background: linear-gradient(-45deg, #1976d2, #42a5f5, #1976d2, #42a5f5);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
   .MuiContainer-root {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
   }
   
   .MuiTypography-h2 {
-    font-size: 2rem;
+    font-size: 2rem !important;
   }
   
   .MuiTypography-h4 {
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
   }
 }
