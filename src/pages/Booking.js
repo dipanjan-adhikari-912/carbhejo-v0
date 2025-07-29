@@ -19,17 +19,6 @@ import {
   Alert,
   CircularProgress
 } from '@mui/material';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-
-// Fix for default markers in react-leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-});
 
 const steps = ['Pickup Details', 'Delivery Details', 'Vehicle Information', 'Review & Book'];
 
@@ -59,8 +48,6 @@ const Booking = () => {
       registration: ''
     }
   });
-
-
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -99,18 +86,18 @@ const Booking = () => {
   };
 
   const renderPickupDetails = () => (
-    <Box sx={{ mt: 2 }}>
+    <Box>
       <Typography variant="h6" gutterBottom>
-        Pickup Location
+        Pickup Location Details
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Pickup Address"
+            label="Complete Address"
             value={bookingData.pickup.address}
             onChange={(e) => handleInputChange('pickup', 'address', e.target.value)}
-            placeholder="Enter your pickup address"
+            placeholder="Enter complete pickup address"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -138,42 +125,34 @@ const Booking = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="subtitle1" gutterBottom>
-            Pickup Location Map
-          </Typography>
-          <Box sx={{ height: 300, width: '100%', border: '1px solid #ccc' }}>
-            <MapContainer
-              center={bookingData.pickup.coordinates}
-              zoom={5}
-              style={{ height: '100%', width: '100%' }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              <Marker position={bookingData.pickup.coordinates}>
-                <Popup>Pickup Location</Popup>
-              </Marker>
-            </MapContainer>
-          </Box>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Location Preview
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Map will be displayed here once address is entered
+              </Typography>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Box>
   );
 
   const renderDeliveryDetails = () => (
-    <Box sx={{ mt: 2 }}>
+    <Box>
       <Typography variant="h6" gutterBottom>
-        Delivery Location
+        Delivery Location Details
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Delivery Address"
+            label="Complete Address"
             value={bookingData.delivery.address}
             onChange={(e) => handleInputChange('delivery', 'address', e.target.value)}
-            placeholder="Enter delivery address"
+            placeholder="Enter complete delivery address"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -201,31 +180,23 @@ const Booking = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="subtitle1" gutterBottom>
-            Delivery Location Map
-          </Typography>
-          <Box sx={{ height: 300, width: '100%', border: '1px solid #ccc' }}>
-            <MapContainer
-              center={bookingData.delivery.coordinates}
-              zoom={5}
-              style={{ height: '100%', width: '100%' }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              <Marker position={bookingData.delivery.coordinates}>
-                <Popup>Delivery Location</Popup>
-              </Marker>
-            </MapContainer>
-          </Box>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Location Preview
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Map will be displayed here once address is entered
+              </Typography>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Box>
   );
 
   const renderVehicleDetails = () => (
-    <Box sx={{ mt: 2 }}>
+    <Box>
       <Typography variant="h6" gutterBottom>
         Vehicle Information
       </Typography>
@@ -287,7 +258,7 @@ const Booking = () => {
   );
 
   const renderReview = () => (
-    <Box sx={{ mt: 2 }}>
+    <Box>
       <Typography variant="h6" gutterBottom>
         Review Your Booking
       </Typography>
@@ -332,14 +303,19 @@ const Booking = () => {
           </Card>
         </Grid>
         <Grid item xs={12}>
-          <Alert severity="info">
-            <Typography variant="h6">
-              Estimated Price: ₹{calculatePrice().toLocaleString()}
-            </Typography>
-            <Typography variant="body2">
-              Final price will be confirmed after route optimization and vehicle inspection.
-            </Typography>
-          </Alert>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Estimated Price
+              </Typography>
+              <Typography variant="h4" color="primary">
+                ₹{calculatePrice().toLocaleString()}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                *Final price may vary based on actual distance and vehicle specifications
+              </Typography>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Box>
@@ -362,11 +338,10 @@ const Booking = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        Book Your Car Transport
+      <Typography variant="h4" gutterBottom align="center">
+        Book Car Transport
       </Typography>
-      
-      <Paper sx={{ p: 3, mt: 3 }}>
+      <Paper sx={{ p: 3, my: 2 }}>
         <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
           {steps.map((label) => (
             <Step key={label}>
@@ -374,36 +349,47 @@ const Booking = () => {
             </Step>
           ))}
         </Stepper>
-
-        {getStepContent(activeStep)}
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-          <Button
-            disabled={activeStep === 0}
-            onClick={handleBack}
-          >
-            Back
-          </Button>
+        
+        {activeStep === steps.length ? (
           <Box>
-            {activeStep === steps.length - 1 ? (
-              <Button
-                variant="contained"
-                onClick={handleBooking}
-                disabled={loading}
-                startIcon={loading ? <CircularProgress size={20} /> : null}
-              >
-                {loading ? 'Processing...' : 'Confirm Booking'}
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleNext}
-              >
-                Next
-              </Button>
-            )}
+            <Alert severity="success" sx={{ mb: 2 }}>
+              All steps completed - you&apos;re finished
+            </Alert>
+            <Button onClick={() => setActiveStep(0)}>
+              Reset
+            </Button>
           </Box>
-        </Box>
+        ) : (
+          <>
+            {getStepContent(activeStep)}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
+                Back
+              </Button>
+              <Box>
+                {activeStep === steps.length - 1 ? (
+                  <Button
+                    variant="contained"
+                    onClick={handleBooking}
+                    disabled={loading}
+                    startIcon={loading ? <CircularProgress size={20} /> : null}
+                  >
+                    {loading ? 'Processing...' : 'Confirm Booking'}
+                  </Button>
+                ) : (
+                  <Button variant="contained" onClick={handleNext}>
+                    Next
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          </>
+        )}
       </Paper>
     </Container>
   );
