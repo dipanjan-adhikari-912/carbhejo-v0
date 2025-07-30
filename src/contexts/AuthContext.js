@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../config/supabase';
+import { 
+  RecaptchaVerifier, 
+  signInWithPhoneNumber, 
+  onAuthStateChanged,
+  signOut as firebaseSignOut
+} from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 const AuthContext = createContext({});
 
@@ -10,57 +16,67 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [confirmationResult, setConfirmationResult] = useState(null);
 
   useEffect(() => {
-    // Get initial session
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
+    // Listen for auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
       setLoading(false);
-    };
+    });
 
-    getSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, []);
+
+  const setupRecaptcha = (phoneNumber) => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        'size': 'invisible',
+        'callback': (response) => {
+          // reCAPTCHA solved, allow sending OTP
+          console.log('reCAPTCHA verified');
+        }
+      });
+    }
+  };
 
   const signInWithOtp = async (phone) => {
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: phone,
-      });
-      return { error };
+      setupRecaptcha(phone);
+      
+      const appVerifier = window.recaptchaVerifier;
+      const confirmationResult = await signInWithPhoneNumber(auth, phone, appVerifier);
+      
+      setConfirmationResult(confirmationResult);
+      return { error: null };
     } catch (error) {
+      console.error('Error sending OTP:', error);
       return { error };
     }
   };
 
-  const verifyOtp = async (phone, token) => {
+  const verifyOtp = async (otp) => {
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone: phone,
-        token: token,
-        type: 'sms'
-      });
-      return { data, error };
+      if (!confirmationResult) {
+        throw new Error('No confirmation result available');
+      }
+      
+      const result = await confirmationResult.confirm(otp);
+      setConfirmationResult(null);
+      
+      return { data: result, error: null };
     } catch (error) {
+      console.error('Error verifying OTP:', error);
       return { error };
     }
   };
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      return { error };
+      await firebaseSignOut(auth);
+      return { error: null };
     } catch (error) {
+      console.error('Error signing out:', error);
       return { error };
     }
   };

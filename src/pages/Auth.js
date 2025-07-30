@@ -48,7 +48,7 @@ const Auth = () => {
       const { error } = await signInWithOtp(formattedPhone);
       
       if (error) {
-        setError(error.message);
+        setError(error.message || 'Failed to send OTP. Please try again.');
       } else {
         setSuccess('OTP sent successfully! Check your phone for the code.');
         setStep(1);
@@ -71,15 +71,10 @@ const Auth = () => {
     setSuccess('');
 
     try {
-      let formattedPhone = phone;
-      if (!phone.startsWith('+')) {
-        formattedPhone = `+91${phone}`;
-      }
-
-      const { error } = await verifyOtp(formattedPhone, otp);
+      const { error } = await verifyOtp(otp);
       
       if (error) {
-        setError(error.message);
+        setError(error.message || 'Invalid OTP. Please try again.');
       } else {
         setSuccess('Authentication successful! Redirecting...');
         setTimeout(() => {
@@ -213,6 +208,9 @@ const Auth = () => {
             </Box>
           </Box>
         )}
+
+        {/* reCAPTCHA container for Firebase */}
+        <div id="recaptcha-container"></div>
       </Paper>
     </Container>
   );
