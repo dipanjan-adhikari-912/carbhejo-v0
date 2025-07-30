@@ -64,7 +64,7 @@ const Home = () => {
           <Button 
             variant="contained" 
             size="large"
-            onClick={() => navigate('/booking')}
+            onClick={() => navigate('/auth')}
             sx={{ 
               backgroundColor: 'white', 
               color: 'primary.main',
@@ -116,7 +116,7 @@ const Home = () => {
           <Button 
             variant="contained" 
             size="large"
-            onClick={() => navigate('/booking')}
+            onClick={() => navigate('/auth')}
             sx={{ mr: 2 }}
           >
             Book Transport
