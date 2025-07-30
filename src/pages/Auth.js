@@ -40,20 +40,30 @@ const Auth = () => {
       formattedPhone = `+91${phone}`; // Default to India (+91)
     }
 
+    // Validate phone number format
+    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    if (!phoneRegex.test(formattedPhone)) {
+      setError('Please enter a valid phone number with country code (e.g., +919876543210)');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setSuccess('');
 
     try {
+      console.log('Attempting to send OTP to:', formattedPhone);
       const { error } = await signInWithOtp(formattedPhone);
       
       if (error) {
+        console.error('OTP send error:', error);
         setError(error.message || 'Failed to send OTP. Please try again.');
       } else {
         setSuccess('OTP sent successfully! Check your phone for the code.');
         setStep(1);
       }
     } catch (err) {
+      console.error('Unexpected error:', err);
       setError('Failed to send OTP. Please try again.');
     } finally {
       setLoading(false);
@@ -71,17 +81,21 @@ const Auth = () => {
     setSuccess('');
 
     try {
-      const { error } = await verifyOtp(otp);
+      console.log('Starting OTP verification...');
+      const { error, data } = await verifyOtp(otp);
       
       if (error) {
+        console.error('OTP verification failed:', error);
         setError(error.message || 'Invalid OTP. Please try again.');
       } else {
-        setSuccess('Authentication successful! Redirecting...');
+        console.log('OTP verification successful:', data);
+        setSuccess('Authentication successful! Redirecting to your profile...');
         setTimeout(() => {
-          navigate('/booking');
+          navigate('/profile');
         }, 1500);
       }
     } catch (err) {
+      console.error('Unexpected error during OTP verification:', err);
       setError('Failed to verify OTP. Please try again.');
     } finally {
       setLoading(false);
@@ -93,6 +107,16 @@ const Auth = () => {
     setOtp('');
     setError('');
     setSuccess('');
+    
+    // Clear reCAPTCHA when going back
+    if (window.recaptchaVerifier) {
+      try {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      } catch (error) {
+        console.log('Error clearing reCAPTCHA:', error);
+      }
+    }
   };
 
   return (
@@ -133,6 +157,26 @@ const Auth = () => {
             <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
               We'll send you a one-time password (OTP) to verify your number
             </Typography>
+            
+            {process.env.NODE_ENV === 'development' && (
+              <Alert severity="info" sx={{ mb: 2 }}>
+                <strong>Development Mode:</strong> Add test phone numbers in Firebase Console → Authentication → Settings → Phone numbers for testing
+              </Alert>
+            )}
+            
+            {error && error.includes('reCAPTCHA') && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                <strong>reCAPTCHA Issue:</strong> 
+                <Button 
+                  variant="text" 
+                  size="small" 
+                  onClick={() => window.location.reload()}
+                  sx={{ ml: 1 }}
+                >
+                  Refresh Page
+                </Button>
+              </Alert>
+            )}
             
             <TextField
               fullWidth

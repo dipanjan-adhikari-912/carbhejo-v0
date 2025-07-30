@@ -1,9 +1,33 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button, Box, Avatar, Menu, MenuItem } from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import PersonIcon from '@mui/icons-material/Person';
+import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+      handleClose();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -11,7 +35,7 @@ const Header = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           CarBhejo
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <Button 
             color="inherit" 
             component={RouterLink} 
@@ -33,6 +57,45 @@ const Header = () => {
           >
             Track Order
           </Button>
+          
+          {user ? (
+            <>
+              <Button
+                color="inherit"
+                component={RouterLink}
+                to="/profile"
+                startIcon={<PersonIcon />}
+              >
+                Profile
+              </Button>
+              <Avatar
+                onClick={handleMenu}
+                sx={{ cursor: 'pointer', bgcolor: 'secondary.main' }}
+              >
+                <PersonIcon />
+              </Avatar>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={() => { navigate('/profile'); handleClose(); }}>
+                  My Profile
+                </MenuItem>
+                <MenuItem onClick={handleSignOut}>
+                  Sign Out
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Button 
+              color="inherit" 
+              component={RouterLink} 
+              to="/auth"
+            >
+              Sign In
+            </Button>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
