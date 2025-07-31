@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  font-family: 'Montserrat', sans-serif;
 }
 
 main {
@@ -28,26 +29,27 @@ main {
 
 /* Animation for cards */
 .MuiCard-root {
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .MuiCard-root:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* Button hover effects */
 .MuiButton-root {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* Stepper customization */
 .MuiStepLabel-root.Mui-completed .MuiStepLabel-label {
-  color: #1976d2 !important;
+  color: #000 !important;
 }
 
 .MuiStepLabel-root.Mui-active .MuiStepLabel-label {
-  color: #1976d2 !important;
+  color: #000 !important;
   font-weight: 600;
 }
 
@@ -65,9 +67,44 @@ main {
 }
 
 .hero-gradient {
-  background: linear-gradient(-45deg, #1976d2, #42a5f5, #1976d2, #42a5f5);
+  background: linear-gradient(-45deg, #000, #333, #000, #333);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
+}
+
+/* Stats animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stats-animation {
+  animation: countUp 0.8s ease-out;
+}
+
+/* Testimonial card hover effect */
+.testimonial-card {
+  transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Feature icon animation */
+.feature-icon {
+  transition: transform 0.3s ease;
+}
+
+.MuiCard-root:hover .feature-icon {
+  transform: scale(1.1);
 }
 
 /* Responsive adjustments */
@@ -77,11 +114,93 @@ main {
     padding-right: 16px !important;
   }
   
+  .MuiTypography-h1 {
+    font-size: 2.5rem !important;
+  }
+  
   .MuiTypography-h2 {
     font-size: 2rem !important;
+  }
+  
+  .MuiTypography-h3 {
+    font-size: 1.75rem !important;
   }
   
   .MuiTypography-h4 {
     font-size: 1.5rem !important;
   }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Loading animation for buttons */
+.MuiButton-root:disabled {
+  opacity: 0.7;
+}
+
+/* Custom focus styles */
+.MuiButton-root:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+/* Glass morphism effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Pulse animation for CTA buttons */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.cta-button {
+  animation: pulse 2s infinite;
+}
+
+/* Typography overrides for Montserrat */
+.MuiTypography-root {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+/* Header styling */
+.MuiAppBar-root {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+/* Navigation styling */
+.nav-link {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #000 !important;
+}
+
+/* Form styling */
+.MuiTextField-root {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.MuiInputBase-input {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.MuiInputLabel-root {
+  font-family: 'Montserrat', sans-serif !important;
 }
