@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
-import Header from './components/Header';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
@@ -15,11 +14,14 @@ import './App.css';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#000',
     },
     secondary: {
       main: '#dc004e',
     },
+  },
+  typography: {
+    fontFamily: 'Montserrat, sans-serif',
   },
 });
 
@@ -30,7 +32,6 @@ function App() {
       <AuthProvider>
         <Router>
           <div className="App">
-            <Header />
             <main>
               <Routes>
                 <Route path="/" element={<Home />} />

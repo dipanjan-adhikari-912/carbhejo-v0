@@ -22,6 +22,8 @@ import StarIcon from '@mui/icons-material/Star';
 import LanguageIcon from '@mui/icons-material/Language';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LocationSearch from '../components/LocationSearch';
+import { MAIN_NAVIGATION } from '../constants/routes';
+import Footer from '../components/Footer';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -104,10 +106,22 @@ const Home = () => {
               CarBhejo
             </Typography>
             <Box sx={{ display: 'flex', ml: 4, gap: 3 }}>
-              <Typography sx={{ color: '#fff', fontWeight: 500, cursor: 'pointer' }}>Ride</Typography>
-              <Typography sx={{ color: '#666', fontWeight: 500, cursor: 'pointer' }}>Drive</Typography>
-              <Typography sx={{ color: '#666', fontWeight: 500, cursor: 'pointer' }}>Business</Typography>
-              <Typography sx={{ color: '#666', fontWeight: 500, cursor: 'pointer' }}>About</Typography>
+              {MAIN_NAVIGATION.map((item) => (
+                <Typography 
+                  key={item.name}
+                  sx={{ 
+                    color: item.href === '/' ? '#fff' : '#666', 
+                    fontWeight: 500, 
+                    cursor: 'pointer',
+                    '&:hover': {
+                      color: '#fff'
+                    }
+                  }}
+                  onClick={() => navigate(item.href)}
+                >
+                  {item.name}
+                </Typography>
+              ))}
             </Box>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -516,6 +530,9 @@ const Home = () => {
           </Grid>
         </Container>
       </Box>
+
+      {/* Footer */}
+      <Footer />
     </Box>
   );
 };
