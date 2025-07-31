@@ -32,8 +32,8 @@ const Home = () => {
 
   const handleBookTransport = () => {
     if (fromLocation && toLocation) {
-      // Navigate to booking page with location data
-      navigate('/booking', { 
+      // Navigate to auth page with location data for OTP verification
+      navigate('/auth', { 
         state: { 
           fromLocation, 
           toLocation 

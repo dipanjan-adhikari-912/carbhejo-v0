@@ -13,7 +13,7 @@ import {
   StepLabel
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Auth = () => {
   const [phone, setPhone] = useState('');
@@ -25,6 +25,11 @@ const Auth = () => {
 
   const { signInWithOtp, verifyOtp } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get location data from navigation state
+  const fromLocation = location.state?.fromLocation || '';
+  const toLocation = location.state?.toLocation || '';
 
   const steps = ['Enter Phone Number', 'Verify OTP'];
 
@@ -89,9 +94,14 @@ const Auth = () => {
         setError(error.message || 'Invalid OTP. Please try again.');
       } else {
         console.log('OTP verification successful:', data);
-        setSuccess('Authentication successful! Redirecting to your profile...');
+        setSuccess('Authentication successful! Redirecting to booking...');
         setTimeout(() => {
-          navigate('/profile');
+          navigate('/booking', { 
+            state: { 
+              fromLocation, 
+              toLocation 
+            } 
+          });
         }, 1500);
       }
     } catch (err) {
@@ -146,6 +156,15 @@ const Auth = () => {
         {success && (
           <Alert severity="success" sx={{ mb: 2 }}>
             {success}
+          </Alert>
+        )}
+
+        {/* Display location information if available */}
+        {fromLocation && toLocation && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            <Typography variant="body2">
+              <strong>Transport Route:</strong> {fromLocation} → {toLocation}
+            </Typography>
           </Alert>
         )}
 
