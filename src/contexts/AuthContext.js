@@ -18,18 +18,31 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [confirmationResult, setConfirmationResult] = useState(null);
+  const [firebaseAvailable, setFirebaseAvailable] = useState(false);
 
   useEffect(() => {
-    // Listen for auth state changes
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
+    // Check if Firebase auth is available
+    if (auth) {
+      setFirebaseAvailable(true);
+      // Listen for auth state changes
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setUser(user);
+        setLoading(false);
+      });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    } else {
+      console.warn('⚠️ Firebase auth not available. Authentication features will be disabled.');
+      setFirebaseAvailable(false);
+      setLoading(false);
+    }
   }, []);
 
   const setupRecaptcha = (phoneNumber) => {
+    if (!firebaseAvailable) {
+      throw new Error('Firebase not configured. Please set up your environment variables.');
+    }
+
     try {
       // Clear any existing reCAPTCHA
       if (window.recaptchaVerifier) {
@@ -65,6 +78,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signInWithOtp = async (phone) => {
+    if (!firebaseAvailable) {
+      return { 
+        error: { 
+          message: 'Firebase not configured. Please set up your environment variables. See FIREBASE_SETUP.md for instructions.' 
+        } 
+      };
+    }
+
     try {
       setupRecaptcha(phone);
       
@@ -104,6 +125,8 @@ export const AuthProvider = ({ children }) => {
         errorMessage = 'Phone authentication is not enabled. Please contact support.';
       } else if (error.code === 'auth/billing-not-enabled') {
         errorMessage = 'Billing not enabled. Please enable billing in Firebase Console or use test phone numbers.';
+      } else if (error.code === 'auth/api-key-not-valid') {
+        errorMessage = 'Firebase API key not valid. Please check your configuration.';
       }
       
       return { error: { ...error, message: errorMessage } };
@@ -111,6 +134,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const verifyOtp = async (otp) => {
+    if (!firebaseAvailable) {
+      return { 
+        error: { 
+          message: 'Firebase not configured. Please set up your environment variables.' 
+        } 
+      };
+    }
+
     try {
       if (!confirmationResult) {
         throw new Error('No confirmation result available');
@@ -147,6 +178,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
+    if (!firebaseAvailable) {
+      return { 
+        error: { 
+          message: 'Firebase not configured. Please set up your environment variables.' 
+        } 
+      };
+    }
+
     try {
       await firebaseSignOut(auth);
       return { error: null };
@@ -159,6 +198,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
+    firebaseAvailable,
     signInWithOtp,
     verifyOtp,
     signOut

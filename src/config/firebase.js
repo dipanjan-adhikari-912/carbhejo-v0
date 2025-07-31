@@ -1,8 +1,13 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, connectAuthEmulator } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-const firebaseConfig = {
+// Check if environment variables are available
+const hasValidConfig = process.env.REACT_APP_FIREBASE_API_KEY && 
+                      process.env.REACT_APP_FIREBASE_AUTH_DOMAIN &&
+                      process.env.REACT_APP_FIREBASE_PROJECT_ID;
+
+const firebaseConfig = hasValidConfig ? {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
@@ -10,22 +15,34 @@ const firebaseConfig = {
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+} : {
+  // Fallback config to prevent errors (replace with your actual Firebase config)
+  apiKey: "demo-api-key",
+  authDomain: "demo-project.firebaseapp.com",
+  projectId: "demo-project",
+  storageBucket: "demo-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:demo123"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase only if we have valid config
+let app, auth, db;
 
-// Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app);
-
-// Initialize Firestore and get a reference to the service
-export const db = getFirestore(app);
-
-// Connect to emulators in development
-if (process.env.NODE_ENV === 'development') {
-  // Uncomment these lines if you want to use Firebase emulators for local development
-  // connectAuthEmulator(auth, 'http://localhost:9099');
-  // connectFirestoreEmulator(db, 'localhost', 8080);
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  
+  if (!hasValidConfig) {
+    console.warn('⚠️ Firebase not properly configured. Please set up your environment variables.');
+    console.warn('📖 See FIREBASE_SETUP.md for instructions.');
+  }
+} catch (error) {
+  console.error('❌ Firebase initialization failed:', error);
+  // Create mock objects to prevent app crashes
+  auth = null;
+  db = null;
 }
 
+export { auth, db };
 export default app; 
